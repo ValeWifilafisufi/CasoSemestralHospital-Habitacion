@@ -7,6 +7,7 @@ import HospitalCasoSemestral.Habitacion.repository.HabitacionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,7 +58,7 @@ public class HabitacionService {
             existente.setPiso(dto.getPiso());
             existente.setTipo_cama(dto.getTipo_cama());
             existente.setEstado_ocupacion(dto.getEstado_ocupacion());
-            existente.setValor(dto.getValor())
+            existente.setValor(dto.getValor());
             return mapToDTO(habitacionRepository.save(existente));
         });
     }
@@ -66,7 +67,19 @@ public class HabitacionService {
         habitacionRepository.deleteById(nro_hab);
     }
 
-    public List<HabitacionResponseDTO> buscarPorCamas()
-
-
+    public List<HabitacionResponseDTO> buscarPorPiso(Long piso){
+        return habitacionRepository.findByPiso(piso).stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+    public List<HabitacionResponseDTO> buscarPorTipoCama(String tipo){
+        return habitacionRepository.findByTipoCamaContainingIgnoreCase(tipo).stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+    public List<HabitacionResponseDTO> buscarPorCamas(Long camas){
+        return habitacionRepository.findByNroCamasLessThan(camas).stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+    public List<HabitacionResponseDTO> buscarPorPrecio(BigDecimal precio){
+        return habitacionRepository.findByValorLessThan(precio).stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+    public List<HabitacionResponseDTO> buscarEntrePrecios(BigDecimal min,BigDecimal max){
+        return habitacionRepository.findByValorBetween(min, max).stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
 }
