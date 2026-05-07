@@ -53,7 +53,7 @@ public class HabitacionService {
 
     public Optional<HabitacionResponseDTO> actualizar(Long nro_hab, HabitacionRequestDTO dto){
         return habitacionRepository.findById(nro_hab).map(existente ->{
-            existente.setNro_habitacion(dto.getNro_habitacion());
+
             existente.setNro_camas(dto.getNro_camas());
             existente.setPiso(dto.getPiso());
             existente.setTipo_cama(dto.getTipo_cama());
