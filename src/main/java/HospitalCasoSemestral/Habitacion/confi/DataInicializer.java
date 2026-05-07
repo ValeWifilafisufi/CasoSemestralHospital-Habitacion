@@ -26,7 +26,12 @@ public class DataInicializer implements CommandLineRunner {
             return;
         }
         log.info(">>>DataInitializer: BD vacia detextada, insertando datos de prueba...");
-        habitacionRepository.save(new Habitacion(123L, 2L, 4L, "UCI", "Desocupadas", new BigDecimal("3993.3")));
+        habitacionRepository.save(new Habitacion(123L, 2L, 1L, "UCI", "Desocupadas", new BigDecimal("399300.3")));
+        habitacionRepository.save(new Habitacion(323L, 2L, 3L, "Normal", "Ocupadas", new BigDecimal("11231.3")));
+        habitacionRepository.save(new Habitacion(298L, 1L, 2L, "UTI", "Desocupadas", new BigDecimal("997554.98")));
+        habitacionRepository.save(new Habitacion(175L, 4L, 1L, "UCI", "Ocupadas", new BigDecimal("864343.53")));
+
+
         log.info(">>>DataInitializer: {} habitaciones insertadas correctamente.",
                 habitacionRepository.count());
     }
