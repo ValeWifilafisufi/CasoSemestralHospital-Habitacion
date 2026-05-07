@@ -30,6 +30,4 @@ public class DataInicializer implements CommandLineRunner {
         log.info(">>>DataInitializer: {} habitaciones insertadas correctamente.",
                 habitacionRepository.count());
     }
-    }
-
 }

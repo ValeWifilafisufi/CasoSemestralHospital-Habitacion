@@ -46,7 +46,7 @@ public class HabitacionController {
     }
 
     @GetMapping("/precio/{precio}")
-    public ResponseEntity<List<HabitacionResponseDTO>> obtenerEntrePrecio(@PathVariable BigDecimal precio){
+    public ResponseEntity<List<HabitacionResponseDTO>> obtenerPorPrecio(@PathVariable BigDecimal precio){
         return ResponseEntity.ok(habitacionService.buscarPorPrecio(precio));
     }
 
