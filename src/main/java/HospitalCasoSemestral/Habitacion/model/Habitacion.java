@@ -19,19 +19,20 @@ import java.math.BigDecimal;
 public class Habitacion {
 
     @Id
-    private Long nro_habitacion;
+    @Column(name = "numero_habitaciones")
+    private Long nroHabitacion;
 
-    @Column(nullable = false)
-    private Long nro_camas;
+    @Column(name= "numero_camas", nullable = false)
+    private Long nroCamas;
 
     @Column(nullable = false)
     private Long piso;
 
     @Column(nullable = false)
-    private String tipo_cama;
+    private String tipoCama;
 
     @Column(nullable = false)
-    private String estado_ocupacion;
+    private String estadoOcupacion;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valor;

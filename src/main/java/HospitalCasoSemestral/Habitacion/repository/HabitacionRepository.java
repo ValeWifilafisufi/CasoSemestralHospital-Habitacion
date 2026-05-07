@@ -9,7 +9,7 @@ public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
 
     List<Habitacion> findByPiso (Long piso);
     List<Habitacion> findByTipoCamaContainingIgnoreCase (String Tipo_cama);
-    List<Habitacion> findByNroCamasLessThan(Long camas);
+    List<Habitacion> findByNroCamasLessThan(Long nrocamas);
     List<Habitacion> findByValorLessThan(BigDecimal valor);
     List<Habitacion> findByValorBetween (BigDecimal min, BigDecimal max);
 }

@@ -24,7 +24,7 @@ public class HabitacionRequestDTO {
 
     @NotNull(message = "El numero de camas no puede ser nulo")
     @PositiveOrZero(message = "El numero de camas debe ser igual o mayor a 0")
-    private Long nro_camas;
+    private Long nroCamas;
 
     @NotNull(message = "El piso no puede ser nulo")
     @PositiveOrZero(message = "El piso debe ser igual o mayor a 0")

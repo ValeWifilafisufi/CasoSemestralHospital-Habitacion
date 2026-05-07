@@ -20,11 +20,11 @@ public class HabitacionService {
 
     public HabitacionResponseDTO mapToDTO(Habitacion habitacion) {
         return new HabitacionResponseDTO(
-                habitacion.getNro_habitacion(),
-                habitacion.getNro_camas(),
+                habitacion.getNroHabitacion(),
+                habitacion.getNroCamas(),
                 habitacion.getPiso(),
-                habitacion.getTipo_cama(),
-                habitacion.getEstado_ocupacion(),
+                habitacion.getTipoCama(),
+                habitacion.getEstadoOcupacion(),
                 habitacion.getValor()
         );
     }
@@ -42,7 +42,7 @@ public class HabitacionService {
     public HabitacionResponseDTO guardar(HabitacionRequestDTO dto){
         Habitacion hab = new Habitacion(
                 dto.getNro_habitacion(),
-                dto.getNro_camas(),
+                dto.getNroCamas(),
                 dto.getPiso(),
                 dto.getTipo_cama(),
                 dto.getEstado_ocupacion(),
@@ -51,13 +51,13 @@ public class HabitacionService {
         return mapToDTO(habitacionRepository.save(hab));
     }
 
-    public Optional<HabitacionResponseDTO> actualizar(Long nro_hab, HabitacionRequestDTO dto){
-        return habitacionRepository.findById(nro_hab).map(existente ->{
+    public Optional<HabitacionResponseDTO> actualizar(Long nrohab, HabitacionRequestDTO dto){
+        return habitacionRepository.findById(nrohab).map(existente ->{
 
-            existente.setNro_camas(dto.getNro_camas());
+            existente.setNroCamas(dto.getNroCamas());
             existente.setPiso(dto.getPiso());
-            existente.setTipo_cama(dto.getTipo_cama());
-            existente.setEstado_ocupacion(dto.getEstado_ocupacion());
+            existente.setTipoCama(dto.getTipo_cama());
+            existente.setEstadoOcupacion(dto.getEstado_ocupacion());
             existente.setValor(dto.getValor());
             return mapToDTO(habitacionRepository.save(existente));
         });
