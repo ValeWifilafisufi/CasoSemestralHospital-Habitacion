@@ -40,12 +40,12 @@ public class HabitacionController {
         return ResponseEntity.ok(habitacionService.buscarPorTipoCama(tipo_cama));
     }
 
-    @GetMapping("/camas/{camas}")
+    @GetMapping("/camas_menos/{camas}")
     public ResponseEntity<List<HabitacionResponseDTO>> obtenerPorCamas(@PathVariable Long camas){
         return ResponseEntity.ok((habitacionService.buscarPorCamas(camas)));
     }
 
-    @GetMapping("/precio/{precio}")
+    @GetMapping("/precio_menos/{precio}")
     public ResponseEntity<List<HabitacionResponseDTO>> obtenerPorPrecio(@PathVariable BigDecimal precio){
         return ResponseEntity.ok(habitacionService.buscarPorPrecio(precio));
     }

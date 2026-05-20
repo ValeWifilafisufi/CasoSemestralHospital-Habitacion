@@ -2,9 +2,6 @@ package HospitalCasoSemestral.Habitacion.confi;
 
 import HospitalCasoSemestral.Habitacion.model.Habitacion;
 import HospitalCasoSemestral.Habitacion.repository.HabitacionRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -15,7 +12,7 @@ import java.math.BigDecimal;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DataInicializer implements CommandLineRunner {
+public class DataInitializer implements CommandLineRunner {
 
     private final HabitacionRepository habitacionRepository;
 

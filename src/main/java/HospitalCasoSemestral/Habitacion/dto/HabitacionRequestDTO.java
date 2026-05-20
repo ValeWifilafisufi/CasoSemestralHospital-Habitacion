@@ -2,10 +2,7 @@ package HospitalCasoSemestral.Habitacion.dto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +31,10 @@ public class HabitacionRequestDTO {
     private String tipo_cama;
 
     @NotBlank(message = "El estado de ocupacion no puede estar vacio")
+    @Pattern(
+            regexp = "Ocupadas|Desocupadas",
+            message = "El estado debe ser Ocupadas o Desocupadas"
+    )
     private String estado_ocupacion;
 
     @NotNull(message = "el valor de la habitacion no puede ser nulo")

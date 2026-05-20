@@ -40,6 +40,9 @@ public class HabitacionService {
     }
 
     public HabitacionResponseDTO guardar(HabitacionRequestDTO dto){
+        if(habitacionRepository.existsById(dto.getNro_habitacion())){
+            throw new RuntimeException("La habitación ya existe");
+        }
         Habitacion hab = new Habitacion(
                 dto.getNro_habitacion(),
                 dto.getNroCamas(),
