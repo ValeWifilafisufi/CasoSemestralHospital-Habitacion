@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(
             MethodArgumentNotValidException ex) {
@@ -17,6 +18,27 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errores.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errores);
+    }
+
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> handleNotFound(RecursoNoEncontradoException ex) {
+        Map<String, String> error = new LinkedHashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(404).body(error);
+    }
+
+    @ExceptionHandler(RecursoDuplicadoException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicado(RecursoDuplicadoException ex) {
+        Map<String, String> error = new LinkedHashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(409).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, String> error = new LinkedHashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(RuntimeException.class)
