@@ -31,16 +31,15 @@ public class HabitacionController {
     private final HabitacionService habitacionService;
     private final HabitacionModelAssembler assembler;
 
-    //---------- OBTENER TODAS LAS HABITACIONES PAGINADAS ---
-    @Operation(summary = "Obtener todas las habitaciones", description = "Retorna un catálogo paginado con las habitaciones registradas")
+    //---------- OBTENER TODAS LAS HABITACIONES ---
+    @Operation(summary = "Obtener todas las habitaciones", description = "Retorna un catálogo con las habitaciones registradas")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Catálogo HAL-JSON de habitaciones obtenido correctamente")
+            @ApiResponse(responseCode = "200", description = "Catálogo de habitaciones obtenido correctamente")
     })
     @GetMapping
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerTodos(
             @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable,
             PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
-
         Page<HabitacionResponseDTO> pagina = habitacionService.obtenerTodos(pageable);
         return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
@@ -60,39 +59,37 @@ public class HabitacionController {
         return ResponseEntity.ok(assembler.toModel(habitacion));
     }
 
-    //----- BUSCAR POR PISO PAGINADO -----------
-    @Operation(summary = "Obtener habitaciones por piso", description = "Retorna una lista pagnada de habitaciones registradas en el piso indicado")
+    //----- BUSCAR POR PISO -----------
+    @Operation(summary = "Obtener habitaciones por piso", description = "Retorna una lista de habitaciones registradas en el piso indicado")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas de forma paginada")
+            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
     @GetMapping("/piso/{piso}")
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorPiso(
             @Parameter(description = "Número de piso", example = "3") @PathVariable Long piso,
             @PageableDefault(page = 0, size = 10) Pageable pageable,
             PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
-
         Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorPiso(piso, pageable);
         return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //------- BUSCAR POR TIPO DE CAMA PAGINADO ---------
-    @Operation(summary = "Obtener habitacion por tipo de cama", description = "Retorna una lista paginada con habitaciones que contengan el tipo de cama")
+    //------- BUSCAR POR TIPO DE CAMA  ---------
+    @Operation(summary = "Obtener habitacion por tipo de cama", description = "Retorna una lista con habitaciones que contengan el tipo de cama")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
     @GetMapping("/tipo_cama/{tipo_cama}")
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorTipoCama(
             @Parameter(description = "Tipo de cama", example = "UCI")
-            @PathVariable("tipo_cama") String tipo, // Corregido el mapeo de variable de ruta
+            @PathVariable("tipo_cama") String tipo,
             @PageableDefault(page = 0, size = 10) Pageable pageable,
             PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
-
         Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorTipoCama(tipo, pageable);
         return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //--------- BUSCAR POR CANTIDAD DE CAMAS PAGINADO ----------
-    @Operation(summary = "Obtener las habitaciones que tengan X camas disponibles", description = "Retorna una lista paginada con las habitaciones filtradas")
+    //--------- BUSCAR POR CANTIDAD DE CAMAS ----------
+    @Operation(summary = "Obtener las habitaciones que tengan X camas disponibles", description = "Retorna una lista con las habitaciones filtradas")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
@@ -106,8 +103,8 @@ public class HabitacionController {
         return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //-------- BUSCAR POR MENOR PRECIO PAGINADO ----------
-    @Operation(summary = "Obtener las habitaciones que cuesten X o menos", description = "Retorna una lista paginada con las habitaciones de menor o igual precio")
+    //-------- BUSCAR POR MENOR PRECIO  ----------
+    @Operation(summary = "Obtener las habitaciones que cuesten X o menos", description = "Retorna una lista con las habitaciones de menor o igual precio")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
@@ -121,8 +118,8 @@ public class HabitacionController {
         return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //-------------- BUSCAR ENTRE PRECIOS PAGINADO -----
-    @Operation(summary = "obtener habitaciones entre dos precios", description = "Retorna una lista paginada cuyo valor se encuentre en el rango indicado")
+    //-------------- BUSCAR ENTRE PRECIOS -----
+    @Operation(summary = "obtener habitaciones entre dos precios", description = "Retorna una lista cuyo valor se encuentre en el rango indicado")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
@@ -138,7 +135,7 @@ public class HabitacionController {
     }
 
     //--------- CREAR HABITACION CON HATEOAS ---------
-    @Operation(summary = "Crear habitación", description = "Registra una nueva habitación y retorna sus enlaces hipermedia")
+    @Operation(summary = "Crear habitación", description = "Registra una nueva habitación y retorna sus enlaces")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Habitación creada correctamente")
     })

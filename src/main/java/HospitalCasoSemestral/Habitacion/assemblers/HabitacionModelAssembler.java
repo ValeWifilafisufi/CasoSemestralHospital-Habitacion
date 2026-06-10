@@ -20,8 +20,8 @@ public class HabitacionModelAssembler implements RepresentationModelAssembler<Ha
                         .obtenerPorNroHab(hab.getNro_habitacion()))
                         .withSelfRel(),
                 linkTo(methodOn(HabitacionController.class)
-                        .obtenerTodos())
-                        .withRel("Todas-las.habitaciones")
+                        .obtenerTodos(null, null))
+                        .withRel("Todas-las-habitaciones")
         );
     }
 }
