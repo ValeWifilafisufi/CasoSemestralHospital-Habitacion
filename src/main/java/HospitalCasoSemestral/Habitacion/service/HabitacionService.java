@@ -5,16 +5,17 @@ import HospitalCasoSemestral.Habitacion.dto.HabitacionResponseDTO;
 import HospitalCasoSemestral.Habitacion.model.Habitacion;
 import HospitalCasoSemestral.Habitacion.repository.HabitacionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import HospitalCasoSemestral.Habitacion.exception.RecursoDuplicadoException;
 import HospitalCasoSemestral.Habitacion.exception.RecursoNoEncontradoException;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
+@Transactional(readOnly = true)
 public class HabitacionService {
     private final HabitacionRepository habitacionRepository;
 
@@ -29,20 +30,17 @@ public class HabitacionService {
         );
     }
 
-    public List<HabitacionResponseDTO> obtenerTodos() {
-        return habitacionRepository.findAll()
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public Page<HabitacionResponseDTO> obtenerTodos(Pageable pageable) {
+        return habitacionRepository.findAll(pageable).map(this::mapToDTO);
     }
 
     public HabitacionResponseDTO obtenerPorNroHabitacion(Long nro_hab) {
         Habitacion habitacion = habitacionRepository.findById(nro_hab)
-                .orElseThrow(() ->
-                        new RecursoNoEncontradoException("No existe una habitación con número " + nro_hab));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una habitación con número " + nro_hab));
         return mapToDTO(habitacion);
     }
 
+    @Transactional
     public HabitacionResponseDTO guardar(HabitacionRequestDTO dto) {
         if (habitacionRepository.existsById(dto.getNro_habitacion())) {
             throw new RecursoDuplicadoException("La habitación " + dto.getNro_habitacion() + " ya existe");
@@ -58,11 +56,10 @@ public class HabitacionService {
         return mapToDTO(habitacionRepository.save(hab));
     }
 
-    public HabitacionResponseDTO actualizar(Long nrohab,
-                                            HabitacionRequestDTO dto) {
+    @Transactional
+    public HabitacionResponseDTO actualizar(Long nrohab, HabitacionRequestDTO dto) {
         Habitacion existente = habitacionRepository.findById(nrohab)
-                .orElseThrow(() ->
-                        new RecursoNoEncontradoException("No existe una habitación con número " + nrohab));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una habitación con número " + nrohab));
         existente.setNroCamas(dto.getNroCamas());
         existente.setPiso(dto.getPiso());
         existente.setTipoCama(dto.getTipo_cama());
@@ -71,6 +68,7 @@ public class HabitacionService {
         return mapToDTO(habitacionRepository.save(existente));
     }
 
+    @Transactional
     public void eliminar(Long nro_hab) {
         if (!habitacionRepository.existsById(nro_hab)) {
             throw new RecursoNoEncontradoException("No existe una habitación con número " + nro_hab);
@@ -78,68 +76,46 @@ public class HabitacionService {
         habitacionRepository.deleteById(nro_hab);
     }
 
-    public List<HabitacionResponseDTO> buscarPorPiso(Long piso) {
-        List<HabitacionResponseDTO> habitaciones =
-                habitacionRepository.findByPiso(piso)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
-        if (habitaciones.isEmpty()) {
+    public Page<HabitacionResponseDTO> buscarPorPiso(Long piso, Pageable pageable) {
+        Page<HabitacionResponseDTO> pagina = habitacionRepository.findByPiso(piso, pageable).map(this::mapToDTO);
+        if (pagina.isEmpty()) {
             throw new RecursoNoEncontradoException("No existen habitaciones registradas en el piso " + piso);
         }
-        return habitaciones;
+        return pagina;
     }
 
-    public List<HabitacionResponseDTO> buscarPorTipoCama(String tipo) {
-        List<HabitacionResponseDTO> habitaciones =
-                habitacionRepository.findByTipoCamaContainingIgnoreCase(tipo)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
-        if (habitaciones.isEmpty()) {
+    public Page<HabitacionResponseDTO> buscarPorTipoCama(String tipo, Pageable pageable) {
+        Page<HabitacionResponseDTO> pagina = habitacionRepository.findByTipoCamaContainingIgnoreCase(tipo, pageable).map(this::mapToDTO);
+        if (pagina.isEmpty()) {
             throw new RecursoNoEncontradoException("No existen habitaciones con tipo de cama " + tipo);
         }
-        return habitaciones;
+        return pagina;
     }
 
-    public List<HabitacionResponseDTO> buscarPorCamas(Long camas) {
-        List<HabitacionResponseDTO> habitaciones =
-                habitacionRepository.findByNroCamasLessThan(camas)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
-        if (habitaciones.isEmpty()) {
+    public Page<HabitacionResponseDTO> buscarPorCamas(Long camas, Pageable pageable) {
+        Page<HabitacionResponseDTO> pagina = habitacionRepository.findByNroCamasLessThan(camas, pageable).map(this::mapToDTO);
+        if (pagina.isEmpty()) {
             throw new RecursoNoEncontradoException("No existen habitaciones con menos de " + camas + " camas");
         }
-        return habitaciones;
+        return pagina;
     }
 
-    public List<HabitacionResponseDTO> buscarPorPrecio(BigDecimal precio) {
-        List<HabitacionResponseDTO> habitaciones =
-                habitacionRepository.findByValorLessThan(precio)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
-        if (habitaciones.isEmpty()) {
+    public Page<HabitacionResponseDTO> buscarPorPrecio(BigDecimal precio, Pageable pageable) {
+        Page<HabitacionResponseDTO> pagina = habitacionRepository.findByValorLessThan(precio, pageable).map(this::mapToDTO);
+        if (pagina.isEmpty()) {
             throw new RecursoNoEncontradoException("No existen habitaciones con valor menor a " + precio);
         }
-        return habitaciones;
+        return pagina;
     }
 
-    public List<HabitacionResponseDTO> buscarEntrePrecios(BigDecimal min,BigDecimal max){
-        if(min.compareTo(max) > 0){
-            throw new IllegalArgumentException(
-                "El precio mínimo no puede ser mayor que el precio máximo");
+    public Page<HabitacionResponseDTO> buscarEntrePrecios(BigDecimal min, BigDecimal max, Pageable pageable) {
+        if (min.compareTo(max) > 0) {
+            throw new IllegalArgumentException("El precio mínimo no puede ser mayor que el precio máximo");
         }
-        List<HabitacionResponseDTO> habitaciones =
-                habitacionRepository.findByValorBetween(min, max)
-                        .stream()
-                        .map(this::mapToDTO)
-                        .collect(Collectors.toList());
-        if(habitaciones.isEmpty()){
-            throw new RecursoNoEncontradoException(
-                    "No existen habitaciones entre $" + min + " y $" + max);
+        Page<HabitacionResponseDTO> pagina = habitacionRepository.findByValorBetween(min, max, pageable).map(this::mapToDTO);
+        if (pagina.isEmpty()) {
+            throw new RecursoNoEncontradoException("No existen habitaciones entre $" + min + " y $" + max);
         }
-        return habitaciones;
+        return pagina;
     }
 }

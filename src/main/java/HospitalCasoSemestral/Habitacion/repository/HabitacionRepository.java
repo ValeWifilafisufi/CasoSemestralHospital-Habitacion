@@ -1,15 +1,16 @@
 package HospitalCasoSemestral.Habitacion.repository;
 
 import HospitalCasoSemestral.Habitacion.model.Habitacion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.math.BigDecimal;
-import java.util.List;
 
 public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
 
-    List<Habitacion> findByPiso (Long piso);
-    List<Habitacion> findByTipoCamaContainingIgnoreCase (String Tipo_cama);
-    List<Habitacion> findByNroCamasLessThan(Long nrocamas);
-    List<Habitacion> findByValorLessThan(BigDecimal valor);
-    List<Habitacion> findByValorBetween (BigDecimal min, BigDecimal max);
+    Page<Habitacion> findByPiso(Long piso, Pageable pageable);
+    Page<Habitacion> findByTipoCamaContainingIgnoreCase(String tipoCama, Pageable pageable);
+    Page<Habitacion> findByNroCamasLessThan(Long nrocamas, Pageable pageable);
+    Page<Habitacion> findByValorLessThan(BigDecimal valor, Pageable pageable);
+    Page<Habitacion> findByValorBetween(BigDecimal min, BigDecimal max, Pageable pageable);
 }

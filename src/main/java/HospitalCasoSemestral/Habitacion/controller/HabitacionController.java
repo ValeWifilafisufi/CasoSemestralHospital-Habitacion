@@ -11,233 +11,170 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/habitacion")
 @RequiredArgsConstructor
 @Tag(name = "Gestion de Habitaciones", description = "Endpoints para dministrar el sistema de Habitaciones del hospital")
 public class HabitacionController {
-
     private final HabitacionService habitacionService;
     private final HabitacionModelAssembler assembler;
 
-    //----------OBTENER TODAS LAS HABITACIONES---
-    @Operation(summary = "Obtener todas las habitaciones", description = "Retorna una lista compuesta con las habitaciones registradas")
+    //---------- OBTENER TODAS LAS HABITACIONES PAGINADAS ---
+    @Operation(summary = "Obtener todas las habitaciones", description = "Retorna un catálogo paginado con las habitaciones registradas")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista de habitaciones obtenida correctamente")
+            @ApiResponse(responseCode = "200", description = "Catálogo HAL-JSON de habitaciones obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<HabitacionResponseDTO>>> obtenerTodos() {
-        List<EntityModel<HabitacionResponseDTO>> hab = habitacionService.obtenerTodos()
-                .stream()
-                .map(assembler::toModel)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(
-                CollectionModel.of(
-                        hab,
-                        linkTo(methodOn(HabitacionController.class)
-                                .obtenerTodos())
-                                .withSelfRel()
-                )
-        );
+    public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerTodos(
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable,
+            PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
+
+        Page<HabitacionResponseDTO> pagina = habitacionService.obtenerTodos(pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //---------BUSCAR POR NUMERO DE HABITACION-----------
+    //--------- BUSCAR POR NUMERO DE HABITACION -----------
     @Operation(summary = "Obtener habitacion por numero de habitacion", description = "Retorna la habitacion que coincida con el numero de habitacion ingresado")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitacion encontrada"),
-            @ApiResponse(responseCode = "404", description = "Habitacion no encontrada"),
-            @ApiResponse(responseCode = "400", description = "Numero de habitacion invalido")
+            @ApiResponse(responseCode = "404", description = "Habitacion no encontrada")
     })
     @GetMapping("/nro_habitacion/{nro_hab}")
     public ResponseEntity<EntityModel<HabitacionResponseDTO>> obtenerPorNroHab(
             @Parameter(description = "Numero de habitacion", example = "101")
             @PathVariable Long nro_hab) {
-        HabitacionResponseDTO habitacion =
-                habitacionService.obtenerPorNroHabitacion(nro_hab);
-        return ResponseEntity.ok(
-                assembler.toModel(habitacion)
-        );
+
+        HabitacionResponseDTO habitacion = habitacionService.obtenerPorNroHabitacion(nro_hab);
+        return ResponseEntity.ok(assembler.toModel(habitacion));
     }
 
-    //-----BUSCAR POR PISO-----------
-    @Operation(summary = "Obtener habitaciones por piso", description = "Retorna una lista de habitaciones registradas en el piso indicado")
+    //----- BUSCAR POR PISO PAGINADO -----------
+    @Operation(summary = "Obtener habitaciones por piso", description = "Retorna una lista pagnada de habitaciones registradas en el piso indicado")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas"),
-            @ApiResponse(responseCode = "404", description = "No existen habitaciones en ese piso"),
-            @ApiResponse(responseCode = "400", description = "Piso invalido")
+            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas de forma paginada")
     })
     @GetMapping("/piso/{piso}")
-    public ResponseEntity<CollectionModel<EntityModel<HabitacionResponseDTO>>> obtenerPorPiso(
-            @Parameter(description = "Número de piso", example = "3")
-            @PathVariable Long piso) {
-        List<EntityModel<HabitacionResponseDTO>> habitaciones =
-                habitacionService.buscarPorPiso(piso)
-                        .stream()
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList());
-        return ResponseEntity.ok(
-                CollectionModel.of(habitaciones,
-                        linkTo(methodOn(HabitacionController.class)
-                                .obtenerPorPiso(piso))
-                                .withSelfRel()
-                )
-        );
+    public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorPiso(
+            @Parameter(description = "Número de piso", example = "3") @PathVariable Long piso,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
+
+        Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorPiso(piso, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //-------BUSCAR POR TIPO DE CAMA---------
-    @Operation(summary = "Obtener habitacion por tipo de cama", description = "Retorna una lista con habitaciones que contengan el tipo de cama")
+    //------- BUSCAR POR TIPO DE CAMA PAGINADO ---------
+    @Operation(summary = "Obtener habitacion por tipo de cama", description = "Retorna una lista paginada con habitaciones que contengan el tipo de cama")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas"),
-            @ApiResponse(responseCode = "404", description = "No existen habitaciones con ese tipo de cama"),
-            @ApiResponse(responseCode = "400", description = "Tipo de cama invalido")
+            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
     @GetMapping("/tipo_cama/{tipo_cama}")
-    public ResponseEntity<CollectionModel<EntityModel<HabitacionResponseDTO>>> obtenerPorTipoCama(
+    public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorTipoCama(
             @Parameter(description = "Tipo de cama", example = "UCI")
-            @PathVariable String tipo) {
-        List<EntityModel<HabitacionResponseDTO>> habitaciones =
-                habitacionService.buscarPorTipoCama(tipo)
-                        .stream()
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList());
-        return ResponseEntity.ok(
-                CollectionModel.of(habitaciones,
-                        linkTo(methodOn(HabitacionController.class)
-                                .obtenerPorTipoCama(tipo))
-                                .withSelfRel()
-                )
-        );
+            @PathVariable("tipo_cama") String tipo, // Corregido el mapeo de variable de ruta
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
+
+        Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorTipoCama(tipo, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //---------BUSCAR POR CANTIDAD DE CAMAS----------
-    @Operation(summary = "Obtener las habitaciones que tengan X camas disponibles", description = "Retornas una lista con las habitaciones que tengan desde el numero o menos de camas")
+    //--------- BUSCAR POR CANTIDAD DE CAMAS PAGINADO ----------
+    @Operation(summary = "Obtener las habitaciones que tengan X camas disponibles", description = "Retorna una lista paginada con las habitaciones filtradas")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas"),
-            @ApiResponse(responseCode = "404", description = "No existen habitaciones con esa cantidad de camas."),
-            @ApiResponse(responseCode = "400", description = "Numero de camas invalido")
+            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
     @GetMapping("/camas_menos/{camas}")
-    public ResponseEntity<CollectionModel<EntityModel<HabitacionResponseDTO>>> obtenerPorCamas(
-            @Parameter(description = "Numero maximo de camas", example = "3")
-            @PathVariable Long camas) {
-        List<EntityModel<HabitacionResponseDTO>> habitaciones =
-                habitacionService.buscarPorCamas(camas)
-                        .stream()
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList());
-        return ResponseEntity.ok(
-                CollectionModel.of(habitaciones,
-                        linkTo(methodOn(HabitacionController.class)
-                                .obtenerPorCamas(camas))
-                                .withSelfRel()
-                )
-        );
+    public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorCamas(
+            @Parameter(description = "Numero maximo de camas", example = "3") @PathVariable Long camas,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
+
+        Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorCamas(camas, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //--------BUSCAR POR MENOR PRECIO----------
-    @Operation(summary = "Obtener las habitaciones que cuesten X o menos", description = "Retorna una lista con las habitaciones que tengan desd el precio ingresado o menos")
+    //-------- BUSCAR POR MENOR PRECIO PAGINADO ----------
+    @Operation(summary = "Obtener las habitaciones que cuesten X o menos", description = "Retorna una lista paginada con las habitaciones de menor o igual precio")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas"),
-            @ApiResponse(responseCode = "404", description = "No existen habitaciones que contengan ese precio"),
-            @ApiResponse(responseCode = "400", description = "Rango de precio invalido")
+            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
     @GetMapping("/precio_menos/{precio}")
-    public ResponseEntity<CollectionModel<EntityModel<HabitacionResponseDTO>>> obtenerPorPrecio(
-            @Parameter(description = "Limite de precio pata buscar", example = "19900")
-            @PathVariable BigDecimal precio) {
-        List<EntityModel<HabitacionResponseDTO>> habitaciones =
-                habitacionService.buscarPorPrecio(precio)
-                        .stream()
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList());
-        return ResponseEntity.ok(
-                CollectionModel.of(habitaciones,
-                        linkTo(methodOn(HabitacionController.class)
-                                .obtenerPorPrecio(precio))
-                                .withSelfRel()
-                )
-        );
+    public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorPrecio(
+            @Parameter(description = "Limite de precio para buscar", example = "19900") @PathVariable BigDecimal precio,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
+
+        Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorPrecio(precio, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //--------------BUSCAR ENTRE PRECIOS-----
-    @Operation(summary = "obtener habitaciones entre dos precios", description = "Retorna una lista con las habitaciones cuyo valor se encuentre entre el precio mínimo y máximo indicado")
+    //-------------- BUSCAR ENTRE PRECIOS PAGINADO -----
+    @Operation(summary = "obtener habitaciones entre dos precios", description = "Retorna una lista paginada cuyo valor se encuentre en el rango indicado")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas"),
-            @ApiResponse(responseCode = "404", description = "No existen habitaciones entre esos precios"),
-            @ApiResponse(responseCode = "400", description = "Rangos de precios invalidos")
+            @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
     @GetMapping("/precio_min/{min}/precio_max/{max}")
-    public ResponseEntity<CollectionModel<EntityModel<HabitacionResponseDTO>>> obtenerEntrePrecios(
-            @Parameter(description = "Precio mínimo", example = "150000")
-            @PathVariable BigDecimal min,
-            @Parameter(description = "Precio máximo", example = "300000")
-            @PathVariable BigDecimal max) {
-        List<EntityModel<HabitacionResponseDTO>> habitaciones =
-                habitacionService.buscarEntrePrecios(min, max)
-                        .stream()
-                        .map(assembler::toModel)
-                        .collect(Collectors.toList());
-        return ResponseEntity.ok(
-                CollectionModel.of(
-                        habitaciones,
-                        linkTo(methodOn(HabitacionController.class)
-                                .obtenerEntrePrecios(min, max))
-                                .withSelfRel()
-                )
-        );
+    public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerEntrePrecios(
+            @Parameter(description = "Precio mínimo", example = "150000") @PathVariable BigDecimal min,
+            @Parameter(description = "Precio máximo", example = "300000") @PathVariable BigDecimal max,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
+
+        Page<HabitacionResponseDTO> pagina = habitacionService.buscarEntrePrecios(min, max, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
-    //---------CREAR HABITACION---------
-    @Operation(summary = "Crear habitación", description = "Registra una nueva habitación")
+    //--------- CREAR HABITACION CON HATEOAS ---------
+    @Operation(summary = "Crear habitación", description = "Registra una nueva habitación y retorna sus enlaces hipermedia")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Habitación creada correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "409", description = "La habitación ya existe")
+            @ApiResponse(responseCode = "201", description = "Habitación creada correctamente")
     })
     @PostMapping
-    public ResponseEntity<HabitacionResponseDTO> crear(
+    public ResponseEntity<EntityModel<HabitacionResponseDTO>> crear(
             @Valid @RequestBody HabitacionRequestDTO dto) {
 
-        return ResponseEntity.status(201)
-                .body(habitacionService.guardar(dto));
+        HabitacionResponseDTO creada = habitacionService.guardar(dto);
+        return ResponseEntity.status(201).body(assembler.toModel(creada));
     }
 
-    //-------Actualizar habitacion
+    //------- ACTUALIZAR HABITACION CON HATEOAS -------
     @Operation(summary = "Actualizar habitación", description = "Actualiza los datos de una habitación existente")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Habitación actualizada"),
-            @ApiResponse(responseCode = "404", description = "Habitación no encontrada"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+            @ApiResponse(responseCode = "200", description = "Habitación actualizada correctamente")
     })
     @PutMapping("/{nro_hab}")
-    public ResponseEntity<HabitacionResponseDTO> actualizar(
-            @Parameter(description = "Número de habitación", example = "101")
-            @PathVariable Long nro_hab,
+    public ResponseEntity<EntityModel<HabitacionResponseDTO>> actualizar(
+            @Parameter(description = "Número de habitación", example = "101") @PathVariable Long nro_hab,
             @Valid @RequestBody HabitacionRequestDTO dto) {
-        return ResponseEntity.ok(
-                habitacionService.actualizar(nro_hab, dto));
+
+        HabitacionResponseDTO actualizada = habitacionService.actualizar(nro_hab, dto);
+        return ResponseEntity.ok(assembler.toModel(actualizada));
     }
 
-    //------------ELIMINAR HABITACION
-    @Operation(summary = "Eliminar habitación", description = "Elimina una habitación existente")
+    //------------ ELIMINAR HABITACION -------
+    @Operation(summary = "Eliminar habitación", description = "Elimina una habitación existente de la base de datos")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Habitación eliminada"),
+            @ApiResponse(responseCode = "204", description = "Habitación eliminada exitosamente"),
             @ApiResponse(responseCode = "404", description = "Habitación no encontrada")
     })
     @DeleteMapping("/{nro_hab}")
     public ResponseEntity<Void> eliminar(
             @Parameter(description = "Número de habitación", example = "101")
             @PathVariable Long nro_hab) {
+
         habitacionService.eliminar(nro_hab);
         return ResponseEntity.noContent().build();
     }
