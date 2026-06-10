@@ -31,6 +31,10 @@ public class HabitacionRequestDTO {
 
     @Schema(description = "El tipo de cama que se encuentra en la habitacion", example = "UCI")
     @NotBlank(message = "El tipo de cama no puede estar vacio")
+    @Pattern(
+            regexp = "UCI|UTI|Normal|Aislamiento|Pediatria",
+            message = "El tipo de cama debe ser UCI, UTI, Normal, Aislamiento o Pediatra"
+    )
     private String tipo_cama;
 
     @Schema(description = "Estado en el que se encuentran las camas de la habitacion", example = "Ocupadas")
