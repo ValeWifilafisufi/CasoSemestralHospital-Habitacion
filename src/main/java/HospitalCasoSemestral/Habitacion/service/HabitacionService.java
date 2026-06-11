@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class HabitacionService {
+public class HabitacionService {7
     private final HabitacionRepository habitacionRepository;
 
     public HabitacionResponseDTO mapToDTO(Habitacion habitacion) {
