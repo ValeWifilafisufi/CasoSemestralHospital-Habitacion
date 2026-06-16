@@ -38,7 +38,7 @@ public class HabitacionController {
     })
     @GetMapping
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerTodos(
-            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable,
+            @PageableDefault(page = 0, size = 10, sort = "nroHabitacion") Pageable pageable,
             PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
         Page<HabitacionResponseDTO> pagina = habitacionService.obtenerTodos(pageable);
         return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
@@ -50,12 +50,12 @@ public class HabitacionController {
             @ApiResponse(responseCode = "200", description = "Habitacion encontrada"),
             @ApiResponse(responseCode = "404", description = "Habitacion no encontrada")
     })
-    @GetMapping("/nro_habitacion/{nro_hab}")
+    @GetMapping("/nro_habitacion/{nroHabitacion}")
     public ResponseEntity<EntityModel<HabitacionResponseDTO>> obtenerPorNroHab(
             @Parameter(description = "Numero de habitacion", example = "101")
-            @PathVariable Long nro_hab) {
+            @PathVariable Long nroHabitacion) {
 
-        HabitacionResponseDTO habitacion = habitacionService.obtenerPorNroHabitacion(nro_hab);
+        HabitacionResponseDTO habitacion = habitacionService.obtenerPorNroHabitacion(nroHabitacion);
         return ResponseEntity.ok(assembler.toModel(habitacion));
     }
 
@@ -78,10 +78,10 @@ public class HabitacionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
-    @GetMapping("/tipo_cama/{tipo_cama}")
+    @GetMapping("/tipoCama/{tipoCama}")
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorTipoCama(
             @Parameter(description = "Tipo de cama", example = "UCI")
-            @PathVariable("tipo_cama") String tipo,
+            @PathVariable("tipoCama") String tipo,
             @PageableDefault(page = 0, size = 10) Pageable pageable,
             PagedResourcesAssembler<HabitacionResponseDTO> pagedAssembler) {
         Page<HabitacionResponseDTO> pagina = habitacionService.buscarPorTipoCama(tipo, pageable);
@@ -93,7 +93,7 @@ public class HabitacionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
-    @GetMapping("/camas_menos/{camas}")
+    @GetMapping("/camasMenos/{camas}")
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorCamas(
             @Parameter(description = "Numero maximo de camas", example = "3") @PathVariable Long camas,
             @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -108,7 +108,7 @@ public class HabitacionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
-    @GetMapping("/precio_menos/{precio}")
+    @GetMapping("/precioMenos/{precio}")
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerPorPrecio(
             @Parameter(description = "Limite de precio para buscar", example = "19900") @PathVariable BigDecimal precio,
             @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -123,7 +123,7 @@ public class HabitacionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitaciones encontradas")
     })
-    @GetMapping("/precio_min/{min}/precio_max/{max}")
+    @GetMapping("/precioMin/{min}/precioMax/{max}")
     public ResponseEntity<PagedModel<EntityModel<HabitacionResponseDTO>>> obtenerEntrePrecios(
             @Parameter(description = "Precio mínimo", example = "150000") @PathVariable BigDecimal min,
             @Parameter(description = "Precio máximo", example = "300000") @PathVariable BigDecimal max,
@@ -152,12 +152,12 @@ public class HabitacionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Habitación actualizada correctamente")
     })
-    @PutMapping("/{nro_hab}")
+    @PutMapping("/{nroHabitacion}")
     public ResponseEntity<EntityModel<HabitacionResponseDTO>> actualizar(
-            @Parameter(description = "Número de habitación", example = "101") @PathVariable Long nro_hab,
+            @Parameter(description = "Número de habitación", example = "101") @PathVariable Long nroHabitacion,
             @Valid @RequestBody HabitacionRequestDTO dto) {
 
-        HabitacionResponseDTO actualizada = habitacionService.actualizar(nro_hab, dto);
+        HabitacionResponseDTO actualizada = habitacionService.actualizar(nroHabitacion, dto);
         return ResponseEntity.ok(assembler.toModel(actualizada));
     }
 
@@ -167,12 +167,12 @@ public class HabitacionController {
             @ApiResponse(responseCode = "204", description = "Habitación eliminada exitosamente"),
             @ApiResponse(responseCode = "404", description = "Habitación no encontrada")
     })
-    @DeleteMapping("/{nro_hab}")
+    @DeleteMapping("/{nroHabitacion}")
     public ResponseEntity<Void> eliminar(
             @Parameter(description = "Número de habitación", example = "101")
-            @PathVariable Long nro_hab) {
+            @PathVariable Long nroHabitacion) {
 
-        habitacionService.eliminar(nro_hab);
+        habitacionService.eliminar(nroHabitacion);
         return ResponseEntity.noContent().build();
     }
 }

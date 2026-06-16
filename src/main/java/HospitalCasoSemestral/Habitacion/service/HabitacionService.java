@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class HabitacionService {7
+public class HabitacionService {
     private final HabitacionRepository habitacionRepository;
 
     public HabitacionResponseDTO mapToDTO(Habitacion habitacion) {
@@ -34,46 +34,46 @@ public class HabitacionService {7
         return habitacionRepository.findAll(pageable).map(this::mapToDTO);
     }
 
-    public HabitacionResponseDTO obtenerPorNroHabitacion(Long nro_hab) {
-        Habitacion habitacion = habitacionRepository.findById(nro_hab)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una habitación con número " + nro_hab));
+    public HabitacionResponseDTO obtenerPorNroHabitacion(Long nroHabitacion) {
+        Habitacion habitacion = habitacionRepository.findById(nroHabitacion)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una habitación con número " + nroHabitacion));
         return mapToDTO(habitacion);
     }
 
     @Transactional
     public HabitacionResponseDTO guardar(HabitacionRequestDTO dto) {
-        if (habitacionRepository.existsById(dto.getNro_habitacion())) {
-            throw new RecursoDuplicadoException("La habitación " + dto.getNro_habitacion() + " ya existe");
+        if (habitacionRepository.existsById(dto.getNroHabitacion())) {
+            throw new RecursoDuplicadoException("La habitación " + dto.getNroHabitacion() + " ya existe");
         }
         Habitacion hab = new Habitacion(
-                dto.getNro_habitacion(),
+                dto.getNroHabitacion(),
                 dto.getNroCamas(),
                 dto.getPiso(),
-                dto.getTipo_cama(),
-                dto.getEstado_ocupacion(),
+                dto.getTipoCama(),
+                dto.getEstadoOcupacion(),
                 dto.getValor()
         );
         return mapToDTO(habitacionRepository.save(hab));
     }
 
     @Transactional
-    public HabitacionResponseDTO actualizar(Long nrohab, HabitacionRequestDTO dto) {
-        Habitacion existente = habitacionRepository.findById(nrohab)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una habitación con número " + nrohab));
+    public HabitacionResponseDTO actualizar(Long nroHabitacion, HabitacionRequestDTO dto) {
+        Habitacion existente = habitacionRepository.findById(nroHabitacion)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una habitación con número " + nroHabitacion));
         existente.setNroCamas(dto.getNroCamas());
         existente.setPiso(dto.getPiso());
-        existente.setTipoCama(dto.getTipo_cama());
-        existente.setEstadoOcupacion(dto.getEstado_ocupacion());
+        existente.setTipoCama(dto.getTipoCama());
+        existente.setEstadoOcupacion(dto.getEstadoOcupacion());
         existente.setValor(dto.getValor());
         return mapToDTO(habitacionRepository.save(existente));
     }
 
     @Transactional
-    public void eliminar(Long nro_hab) {
-        if (!habitacionRepository.existsById(nro_hab)) {
-            throw new RecursoNoEncontradoException("No existe una habitación con número " + nro_hab);
+    public void eliminar(Long nroHabitacion) {
+        if (!habitacionRepository.existsById(nroHabitacion)) {
+            throw new RecursoNoEncontradoException("No existe una habitación con número " + nroHabitacion);
         }
-        habitacionRepository.deleteById(nro_hab);
+        habitacionRepository.deleteById(nroHabitacion);
     }
 
     public Page<HabitacionResponseDTO> buscarPorPiso(Long piso, Pageable pageable) {

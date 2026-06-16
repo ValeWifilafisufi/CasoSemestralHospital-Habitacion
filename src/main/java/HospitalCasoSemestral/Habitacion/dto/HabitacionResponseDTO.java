@@ -15,19 +15,19 @@ import java.math.BigDecimal;
 public class HabitacionResponseDTO {
 
     @Schema(description = "Numero de habitacion", example = "101")
-    private Long nro_habitacion;
+    private Long nroHabitacion;
 
     @Schema(description = "Numero de camas en la habitacion", example = "3")
-    private Long nro_camas;
+    private Long nroCamas;
 
     @Schema(description = "Piso en el cual se encuentra la habitacion", example = "2")
     private Long piso;
 
     @Schema(description = "El tipo de cama que se encuentra en la habitacion", example = "UCI")
-    private String tipo_cama;
+    private String tipoCama;
 
     @Schema(description = "Estado en el que se encuentran las camas de la habitacion", example = "Ocupadas")
-    private String estado_ocupacion;
+    private String estadoOcupacion;
 
     @Schema(description = "Valor del uso de la habitacion", example = "50000")
     private BigDecimal valor;

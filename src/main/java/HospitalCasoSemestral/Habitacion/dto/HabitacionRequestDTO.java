@@ -17,7 +17,7 @@ public class HabitacionRequestDTO {
     @Schema(description = "Numero de habitacion", example = "101")
     @NotNull(message = "El numero de habitacion no puede ser nulo")
     @Positive(message = "El numero de habitacion debe ser mayor a 0")
-    private Long nro_habitacion;
+    private Long nroHabitacion;
 
     @Schema(description = "Numero de camas en la habitacion", example = "3")
     @NotNull(message = "El numero de camas no puede ser nulo")
@@ -35,7 +35,7 @@ public class HabitacionRequestDTO {
             regexp = "UCI|UTI|Normal|Aislamiento|Pediatria",
             message = "El tipo de cama debe ser UCI, UTI, Normal, Aislamiento o Pediatra"
     )
-    private String tipo_cama;
+    private String tipoCama;
 
     @Schema(description = "Estado en el que se encuentran las camas de la habitacion", example = "Ocupadas")
     @NotBlank(message = "El estado de ocupacion no puede estar vacio")
@@ -43,7 +43,7 @@ public class HabitacionRequestDTO {
             regexp = "Ocupadas|Desocupadas",
             message = "El estado debe ser Ocupadas o Desocupadas"
     )
-    private String estado_ocupacion;
+    private String estadoOcupacion;
 
     @Schema(description = "Valor del uso de la habitacion", example = "50000")
     @NotNull(message = "el valor de la habitacion no puede ser nulo")
