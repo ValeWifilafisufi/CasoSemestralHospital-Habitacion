@@ -2,7 +2,6 @@ package HospitalCasoSemestral.Habitacion.assemblers;
 
 import HospitalCasoSemestral.Habitacion.controller.HabitacionController;
 import HospitalCasoSemestral.Habitacion.dto.HabitacionResponseDTO;
-import HospitalCasoSemestral.Habitacion.model.Habitacion;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

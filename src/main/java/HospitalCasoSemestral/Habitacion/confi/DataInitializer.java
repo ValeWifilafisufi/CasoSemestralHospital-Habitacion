@@ -37,7 +37,6 @@ public class DataInitializer implements CommandLineRunner {
             log.info(">>> DataInitializer: El usuario 'valentina' ya existe.");
         }
 
-        // --- 2. CARGA DE LAS HABITACIONES ---
         if (habitacionRepository.count() > 0) {
             log.info(">>> DataInitializer: la BD ya tiene habitaciones, se omite la carga inicial.");
             return;
