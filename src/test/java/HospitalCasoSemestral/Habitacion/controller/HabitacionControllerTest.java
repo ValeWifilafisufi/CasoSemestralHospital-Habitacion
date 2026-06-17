@@ -80,17 +80,17 @@ public class HabitacionControllerTest {
     @DisplayName("GIVEN: DTO válido WHEN: POST /api/habitacion THEN: Retorna 201 Created")
     void shouldCreateHabitacion() throws Exception {
         HabitacionRequestDTO nuevoDTO = new HabitacionRequestDTO();
-        nuevoDTO.setNro_habitacion(202L);
+        nuevoDTO.setNroHabitacion(202L);
         nuevoDTO.setNroCamas(2L);
         nuevoDTO.setPiso(2L);
-        nuevoDTO.setTipo_cama("UCI");
-        nuevoDTO.setEstado_ocupacion("Desocupadas");
+        nuevoDTO.setTipoCama("UCI");
+        nuevoDTO.setEstadoOcupacion("Desocupadas");
         nuevoDTO.setValor(new BigDecimal("50000"));
 
         HabitacionResponseDTO respuestaDTO = new HabitacionResponseDTO();
-        respuestaDTO.setNro_habitacion(202L);
-        respuestaDTO.setTipo_cama("UCI");
-        respuestaDTO.setEstado_ocupacion("Desocupadas");
+        respuestaDTO.setNroHabitacion(202L);
+        respuestaDTO.setTipoCama("UCI");
+        respuestaDTO.setEstadoOcupacion("Desocupadas");
 
         when(habitacionService.guardar(any(HabitacionRequestDTO.class))).thenReturn(respuestaDTO);
 
@@ -109,15 +109,15 @@ public class HabitacionControllerTest {
         Long idHabitacion = 1L;
 
         HabitacionRequestDTO updateDTO = new HabitacionRequestDTO();
-        updateDTO.setNro_habitacion(202L);
+        updateDTO.setNroHabitacion(202L);
         updateDTO.setNroCamas(2L);
         updateDTO.setPiso(2L);
-        updateDTO.setTipo_cama("UCI");
-        updateDTO.setEstado_ocupacion("Desocupadas");
+        updateDTO.setTipoCama("UCI");
+        updateDTO.setEstadoOcupacion("Desocupadas");
         updateDTO.setValor(new BigDecimal("50000"));
 
         HabitacionResponseDTO respuestaDTO = new HabitacionResponseDTO();
-        respuestaDTO.setNro_habitacion(202L);
+        respuestaDTO.setNroHabitacion(202L);
 
         when(habitacionService.actualizar(eq(idHabitacion), any(HabitacionRequestDTO.class))).thenReturn(respuestaDTO);
 

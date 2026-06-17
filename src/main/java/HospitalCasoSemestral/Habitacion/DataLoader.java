@@ -2,6 +2,7 @@ package HospitalCasoSemestral.Habitacion;
 
 import HospitalCasoSemestral.Habitacion.model.Habitacion;
 import HospitalCasoSemestral.Habitacion.repository.HabitacionRepository;
+import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,9 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Profile("dev")
+// @Profile("dev")  <-- Comentado para que siempre se ejecute
 @Component
-
+@RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
     @Autowired

@@ -53,21 +53,14 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/v3/api-docs/**", "/swagger-ui/**",
-                                "/swagger-ui.html", "/doc/swagger-ui.html",
-                                "/doc/swagger-ui/**"
-                        ).permitAll()
-
-                        .requestMatchers("/auth/**").permitAll()
-
-                        // Agregamos la ruta exacta SIN slash, y la ruta CON asteriscos
-                        .requestMatchers(HttpMethod.GET, "/api/habitacion", "/api/habitacion/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/habitacion", "/api/habitacion/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/habitacion", "/api/habitacion/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/habitacion", "/api/habitacion/**").authenticated()
-
-                        .anyRequest().authenticated()
+                                .requestMatchers(
+                                        "/v3/api-docs/**", "/swagger-ui/**",
+                                        "/swagger-ui.html", "/doc/swagger-ui.html",
+                                        "/doc/swagger-ui/**",
+                                        "/auth/**"
+                                ).permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/habitacion", "/api/habitacion/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
