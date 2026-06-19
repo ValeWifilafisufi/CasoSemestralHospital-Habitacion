@@ -3,6 +3,7 @@ package HospitalCasoSemestral.Habitacion.controller;
 import HospitalCasoSemestral.Habitacion.assemblers.HabitacionModelAssembler;
 import HospitalCasoSemestral.Habitacion.dto.HabitacionRequestDTO;
 import HospitalCasoSemestral.Habitacion.dto.HabitacionResponseDTO;
+import HospitalCasoSemestral.Habitacion.security.JwtService;
 import HospitalCasoSemestral.Habitacion.service.HabitacionService;
 import com.fasterxml.jackson.databind.ObjectMapper; // Import correcto
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,6 +52,8 @@ public class HabitacionControllerTest {
 
     @MockitoBean
     private HabitacionService habitacionService;
+    @MockBean
+    private JwtService jwtService;
 
     @Test
     @DisplayName("GIVEN: Existen habitaciones WHEN: GET /api/habitacion THEN: Retorna 200 OK y la lista paginada")
@@ -99,8 +103,9 @@ public class HabitacionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(nuevoDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nro_habitacion").value(202))
-                .andExpect(jsonPath("$.tipo_cama").value("UCI"));
+                // CORRECCIÓN: Usamos camelCase para coincidir con la serialización por defecto de Spring
+                .andExpect(jsonPath("$.nroHabitacion").value(202))
+                .andExpect(jsonPath("$.tipoCama").value("UCI"));
     }
 
     @Test
@@ -126,11 +131,13 @@ public class HabitacionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nro_habitacion").value(202));
+                // CORRECCIÓN: Usamos camelCase
+                .andExpect(jsonPath("$.nroHabitacion").value(202));
     }
 
     @Test
-    @DisplayName("GIVEN: ID válido WHEN: DELETE /api/habitacion/{id} THEN: Retorna 24 No Content")
+    // CORRECCIÓN: Arreglé el título de "24" a "204"
+    @DisplayName("GIVEN: ID válido WHEN: DELETE /api/habitacion/{id} THEN: Retorna 204 No Content")
     void shouldDeleteHabitacion() throws Exception {
         Long idHabitacion = 1L;
         doNothing().when(habitacionService).eliminar(idHabitacion);
