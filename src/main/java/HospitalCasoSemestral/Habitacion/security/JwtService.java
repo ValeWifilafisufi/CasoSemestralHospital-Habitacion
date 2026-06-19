@@ -32,7 +32,6 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                // LE DECIMOS EXPLÍCITAMENTE QUE USE EL ALGORITMO COMPATIBLE
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }

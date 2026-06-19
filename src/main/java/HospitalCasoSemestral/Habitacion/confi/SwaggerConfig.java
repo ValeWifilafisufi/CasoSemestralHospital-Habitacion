@@ -17,7 +17,6 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                // Enrutamiento a través del API Gateway común
                 .addServersItem(new Server().url("http://localhost:8500"))
                 .info(new Info()
                         .title("API de Habitaciones")
@@ -30,7 +29,6 @@ public class SwaggerConfig {
                         .license(new License()
                                 .name("Hospital Viña del Mar")
                                 .url("https://www.hospitalfricke.cl/pacientes")))
-                // Habilita el esquema de seguridad global para JWT
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()

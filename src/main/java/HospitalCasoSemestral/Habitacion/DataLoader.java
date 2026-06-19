@@ -1,25 +1,49 @@
 package HospitalCasoSemestral.Habitacion;
 
 import HospitalCasoSemestral.Habitacion.model.Habitacion;
+import HospitalCasoSemestral.Habitacion.model.Role;
+import HospitalCasoSemestral.Habitacion.model.User;
 import HospitalCasoSemestral.Habitacion.repository.HabitacionRepository;
+import HospitalCasoSemestral.Habitacion.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-// @Profile("dev")
+
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired
-    private HabitacionRepository habitacionRepository;
+    private final HabitacionRepository habitacionRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+
+        if (userRepository.findByUsername("valentina").isEmpty()) {
+            User adminUser = new User();
+            adminUser.setUsername("valentina");
+            adminUser.setPassword(passwordEncoder.encode("123"));
+            adminUser.setRole(Role.ADMIN);
+            userRepository.save(adminUser);
+            log.info("Usuario administrador creado automáticamente (username: valentina).");
+        }
+
+        if (userRepository.findByUsername("Maty").isEmpty()) {
+            User adminUser2 = new User();
+            adminUser2.setUsername("Maty");
+            adminUser2.setPassword(passwordEncoder.encode("1234"));
+            adminUser2.setRole(Role.ADMIN);
+            userRepository.save(adminUser2);
+            log.info("Usuario administrador creado automáticamente (username: Maty).");
+        }
 
         if (habitacionRepository.count() > 0) {
             System.out.println(">>> DataFaker: La base de datos ya tiene habitaciones. Carga omitida.");
@@ -29,7 +53,7 @@ public class DataLoader implements CommandLineRunner {
         Faker faker = new Faker();
         System.out.println(">>> DataFaker: Generando 20 habitaciones aleatorias...");
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 50; i++) {
             Habitacion habitacion = new Habitacion();
             habitacion.setNroHabitacion(201L + i);
             habitacion.setNroCamas((long) faker.number().numberBetween(1, 5));
@@ -40,6 +64,6 @@ public class DataLoader implements CommandLineRunner {
             habitacion.setValor(BigDecimal.valueOf(precioAleatorio));
             habitacionRepository.save(habitacion);
         }
-        System.out.println(">>> DataFaker: ¡20 habitaciones insertadas exitosamente!");
+        System.out.println(">>> DataFaker: ¡50 habitaciones insertadas exitosamente!");
     }
 }
